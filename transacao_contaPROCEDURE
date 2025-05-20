@@ -1,0 +1,30 @@
+USE bank;
+
+DELIMITER //
+
+CREATE PROCEDURE transacao_conta(
+	IN from_id INT,     
+    IN to_id INT,        
+    IN valor DECIMAL(10,2) 
+)
+BEGIN
+    START TRANSACTION;
+
+    UPDATE account 
+    SET avail_balance = avail_balance - valor
+    WHERE account_id = from_id;
+
+    UPDATE account 
+    SET avail_balance = avail_balance + valor
+    WHERE account_id = to_id;
+
+    COMMIT;
+END;
+//
+
+DELIMITER ;
+
+CALL transacao_conta(5, 3, 1000.00);
+
+SELECT account_id, avail_balance FROM account 
+WHERE account_id IN (3,5);
